@@ -23,7 +23,6 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 
-
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -36,11 +35,9 @@ public class CommentService {
         String username = getUsername(token);
         Board board = findBoard(requestDto.getPostId());
 
-
         Comment comment = new Comment(requestDto, username);
         Comment saveComment = commentRepository.save(comment);
         return new CommentResponseDto(saveComment);
-
     }
 
     public CommentResponseDto updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest req) {
@@ -54,8 +51,13 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
+    public void deleteComment(Long id, HttpServletRequest req) {
+        String token = auth(req);
+        Comment comment = findComment(id);
+        checkUsername(comment, token);
 
-
+        commentRepository.delete(comment);
+    }
 
     // 댓글 찾는 매서드
     public Comment findComment(Long id) {
@@ -79,7 +81,6 @@ public class CommentService {
         if(!jwtUtil.validateToken(token)) {
             throw new IllegalArgumentException("토큰 에러");
         }
-
         return token;
     }
 
@@ -97,5 +98,3 @@ public class CommentService {
     }
 
 }
-
-

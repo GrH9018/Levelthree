@@ -14,13 +14,11 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
     private final CommentService commentService;
 
-
     //댓글 생성
     @PostMapping("/comment")
     public CommentResponseDto createComment(@RequestBody CommentRequestDto requestDto, HttpServletRequest req){
         return commentService.createComment(requestDto, req);
     }
-
 
     //댓글 수정
     @PutMapping("/comment/{id}")
@@ -28,14 +26,10 @@ public class CommentController {
         return  commentService.updateComment(id, requestDto, req);
     }
 
-    
-
-
     //댓글 삭제
-//    @DeleteMapping("/comment/{id}")
-//    public Long deleteComment(@PathVariable Long id, HttpServletRequest req) {
-//        return commentService.deleteComment(id, req);
-//    }
-
-
+    @DeleteMapping("/comment/{id}")
+    public ResponseEntity<String> deleteComment(@PathVariable Long id, HttpServletRequest req) {
+        commentService.deleteComment(id, req);
+        return ResponseEntity.ok().body("댓글 삭제 성공");
+    }
 }
