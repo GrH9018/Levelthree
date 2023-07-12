@@ -30,10 +30,10 @@ public class CommentController {
 
 
     //댓글 삭제
-    @DeleteMapping("/comment/{id}")
-    public Long deleteComment(@PathVariable Long id, HttpServletRequest req) {
-        return commentService.deleteComment(id, req);
-    }
-    
+//    @DeleteMapping("/comment/{id}")
+//    public Long deleteComment(@PathVariable Long id, HttpServletRequest req) {
+//        return commentService.deleteComment(id, req);
+//    }
+
 
 }
