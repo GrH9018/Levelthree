@@ -28,6 +28,8 @@ public class CommentController {
         return  commentService.updateComment(id, requestDto, req);
     }
 
+    
+
 
     //댓글 삭제
 //    @DeleteMapping("/comment/{id}")
