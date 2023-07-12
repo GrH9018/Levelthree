@@ -33,9 +33,10 @@ public class BoardService {
     public BoardResponseDto createBoard(BoardRequestDto requestDto, HttpServletRequest req) {
         String token = auth(req);
         String username = getUsername(token);
+        User user = findUserByUsername(username);
 
 
-        Board board = new Board(requestDto, username);
+        Board board = new Board(requestDto, username, user);
         Board saveBoard = boardRepository.save(board);
         return new BoardResponseDto(saveBoard);
     }
