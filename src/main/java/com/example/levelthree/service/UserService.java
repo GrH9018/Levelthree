@@ -8,6 +8,7 @@ import com.example.levelthree.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +33,6 @@ public class UserService {
         }
         User user = new User(username, password);
         userRepository.save(user);
-
-
     }
 
     public void login (UserRequestDto userRequestDto, HttpServletResponse JwtResponse) {
@@ -50,7 +49,5 @@ public class UserService {
         // Jwt 생성
         String token = jwtUtil.createToken(user.getUsername());
         JwtResponse.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
-
-
     }
 }
