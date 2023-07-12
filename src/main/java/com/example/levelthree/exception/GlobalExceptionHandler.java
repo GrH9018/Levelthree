@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    
-    @ExceptionHandler
-    public ResponseEntity exceptionHandler(Exception e) {
-
+    @ExceptionHandler({JwtTokenNotAvailableException.class}) // the token is invalid
+    public ResponseEntity<String> exceptionHandler(Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

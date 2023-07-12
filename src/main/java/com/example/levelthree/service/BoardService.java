@@ -5,6 +5,7 @@ import com.example.levelthree.dto.BoardResponseDto;
 import com.example.levelthree.entity.Board;
 import com.example.levelthree.entity.User;
 import com.example.levelthree.entity.UserRoleEnum;
+import com.example.levelthree.exception.JwtTokenNotAvailableException;
 import com.example.levelthree.jwt.JwtUtil;
 import com.example.levelthree.repository.BoardRepository;
 import com.example.levelthree.repository.UserRepository;
@@ -105,7 +106,7 @@ public class BoardService {
 
         String token = jwtUtil.substringToken(tokenValue);
         if(!jwtUtil.validateToken(token)) {
-            throw new IllegalArgumentException("토큰 에러");
+            throw new JwtTokenNotAvailableException("토큰이 유효하지 않습니다.");
         }
 
         return token;
