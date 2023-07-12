@@ -35,6 +35,7 @@ public class Board extends Timestamped {
     private User user;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("createdAt desc")
     private List<Comment> commentList = new ArrayList<>();
 
     public Board(BoardRequestDto requestDto, String username,User user) {
