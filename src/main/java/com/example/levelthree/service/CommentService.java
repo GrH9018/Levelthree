@@ -4,6 +4,8 @@ import com.example.levelthree.dto.CommentRequestDto;
 import com.example.levelthree.dto.CommentResponseDto;
 import com.example.levelthree.entity.Board;
 import com.example.levelthree.entity.Comment;
+import com.example.levelthree.entity.User;
+import com.example.levelthree.entity.UserRoleEnum;
 import com.example.levelthree.jwt.JwtUtil;
 import com.example.levelthree.repository.BoardRepository;
 import com.example.levelthree.repository.CommentRepository;
@@ -43,7 +45,11 @@ public class CommentService {
     public CommentResponseDto updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest req) {
         String token = auth(req);
         Comment comment = findComment(id);
-        checkUsername(comment, token);
+        String username = getUsername(token);
+
+        if (findUserByUsername(username).getRole().equals(UserRoleEnum.USER)) {
+            checkUsername(comment, token);
+        }
 
         findBoard(requestDto.getPostId());
 
@@ -54,9 +60,18 @@ public class CommentService {
     public void deleteComment(Long id, HttpServletRequest req) {
         String token = auth(req);
         Comment comment = findComment(id);
-        checkUsername(comment, token);
+        String username = getUsername(token);
+
+        if (findUserByUsername(username).getRole().equals(UserRoleEnum.USER)) {
+            checkUsername(comment, token);
+        }
 
         commentRepository.delete(comment);
+    }
+
+
+    private User findUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(()->new IllegalArgumentException("사용자가 없습니다."));
     }
 
     // 댓글 찾는 매서드

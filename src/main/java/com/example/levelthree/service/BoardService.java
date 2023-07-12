@@ -3,8 +3,11 @@ package com.example.levelthree.service;
 import com.example.levelthree.dto.BoardRequestDto;
 import com.example.levelthree.dto.BoardResponseDto;
 import com.example.levelthree.entity.Board;
+import com.example.levelthree.entity.User;
+import com.example.levelthree.entity.UserRoleEnum;
 import com.example.levelthree.jwt.JwtUtil;
 import com.example.levelthree.repository.BoardRepository;
+import com.example.levelthree.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +25,14 @@ import java.util.Optional;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
 
     public BoardResponseDto createBoard(BoardRequestDto requestDto, HttpServletRequest req) {
         String token = auth(req);
         String username = getUsername(token);
+
 
         Board board = new Board(requestDto, username);
         Board saveBoard = boardRepository.save(board);
@@ -46,21 +51,28 @@ public class BoardService {
     public BoardResponseDto updateBoard(Long id, BoardRequestDto requestDto, HttpServletRequest req) {
         String token = auth(req);
         Board board = findBoard(id);
+        String username = getUsername(token);
 
-        checkUsername(board, token);
+        if (findUserByUsername(username).getRole().equals(UserRoleEnum.USER)) {
+            checkUsername(board, token);
+        }
+
         board.update(requestDto);
         return new BoardResponseDto(board);
     }
 
 
 
-    public Long deleteBoard(Long id, HttpServletRequest req) {
+    public void deleteBoard(Long id, HttpServletRequest req) {
         String token = auth(req);
         Board board = findBoard(id);
+        String username = getUsername(token);
 
-        checkUsername(board, token);
+        if (findUserByUsername(username).getRole().equals(UserRoleEnum.USER)) {
+            checkUsername(board, token);
+        }
+
         boardRepository.delete(board);
-        return id;
     }
 
 
@@ -82,6 +94,10 @@ public class BoardService {
         if (!board.getUsername().equals(username)) {
             throw new IllegalArgumentException("작성자가 아닙니다.");
         }
+    }
+
+    private User findUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(()->new IllegalArgumentException("사용자가 없습니다."));
     }
 
     private String auth(HttpServletRequest req) {

@@ -3,6 +3,7 @@ package com.example.levelthree.service;
 import com.example.levelthree.dto.SignupRequestDto;
 import com.example.levelthree.dto.UserRequestDto;
 import com.example.levelthree.entity.User;
+import com.example.levelthree.entity.UserRoleEnum;
 import com.example.levelthree.jwt.JwtUtil;
 import com.example.levelthree.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,15 +24,25 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    private final String ADMIN_TOKEN = "testadmin";
+
     public void signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
+        UserRoleEnum role = UserRoleEnum.USER;
 
         Optional<User> overlapUser = userRepository.findByUsername(username);
         if(overlapUser.isPresent()) {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
-        User user = new User(username, password);
+
+        if (ADMIN_TOKEN.equals(signupRequestDto.getAdminToken())) {
+            role = UserRoleEnum.ADMIN;
+        }
+
+
+
+        User user = new User(username, password, role);
         userRepository.save(user);
     }
 
@@ -47,7 +58,7 @@ public class UserService {
         }
 
         // Jwt 생성
-        String token = jwtUtil.createToken(user.getUsername());
+        String token = jwtUtil.createToken(user.getUsername(), user.getRole());
         JwtResponse.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
     }
 }
