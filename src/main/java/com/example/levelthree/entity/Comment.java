@@ -24,23 +24,22 @@ public class Comment extends Timestamped {
     @Column(name = "contents", nullable = false,  length = 500)
     private String contents;
 
-    public  Comment(CommentRequestDto requestDto, String username){
+    @ManyToOne
+    @JoinColumn(name = "board_id", nullable = false)
+    private Board board;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    public Comment(CommentRequestDto requestDto, String username, Board board, User user) {
         this.username = username;
         this.contents = requestDto.getContents();
+        this.board = board;
+        this.user = user;
     }
 
-    public void update(CommentRequestDto commentRequestDto){
-
+    public void update(CommentRequestDto requestDto) {
+        this.contents = requestDto.getContents();
     }
-
-    //public Board(BoardRequestDto requestDto, String username) {
-    //        this.title = requestDto.getTitle();
-    //        this.username = username;
-    //        this.contents = requestDto.getContents();
-    //    }
-    //
-    //    public void update(BoardRequestDto requestDto) {
-    //        this.title = requestDto.getTitle();;
-    //        this.contents = requestDto.getContents();
-    //    }
 }

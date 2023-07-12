@@ -36,8 +36,9 @@ public class CommentService {
         String token = auth(req);
         String username = getUsername(token);
         Board board = findBoard(requestDto.getPostId());
+        User user = findUserByUsername(username);
 
-        Comment comment = new Comment(requestDto, username);
+        Comment comment = new Comment(requestDto, username, board, user);
         Comment saveComment = commentRepository.save(comment);
         return new CommentResponseDto(saveComment);
     }

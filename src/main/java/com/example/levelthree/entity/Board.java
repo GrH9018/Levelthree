@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -24,14 +27,21 @@ public class Board extends Timestamped {
     @Column(name = "username", nullable = false)
     private String username;
 
-
     @Column(name = "contents", nullable = false,  length = 500)
     private String contents;
 
-    public Board(BoardRequestDto requestDto, String username) {
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
+
+    public Board(BoardRequestDto requestDto, String username,User user) {
         this.title = requestDto.getTitle();
         this.username = username;
         this.contents = requestDto.getContents();
+        this.user = user;
     }
 
     public void update(BoardRequestDto requestDto) {
