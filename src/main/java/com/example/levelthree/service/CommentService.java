@@ -96,5 +96,4 @@ public class CommentService {
         String username = info.getSubject();
         return username;
     }
-
 }
