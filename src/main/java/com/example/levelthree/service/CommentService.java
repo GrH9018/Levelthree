@@ -43,8 +43,17 @@ public class CommentService {
 
     }
 
+    public CommentResponseDto updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest req) {
+        String token = auth(req);
+        Comment comment = findComment(id);
+        checkUsername(comment, token);
 
-    
+        findBoard(requestDto.getPostId());
+
+        comment.update(requestDto);
+        return new CommentResponseDto(comment);
+    }
+
 
 
 
